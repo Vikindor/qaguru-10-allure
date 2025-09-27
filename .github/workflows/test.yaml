@@ -1,5 +1,12 @@
 name: Test
-on: [push]
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      runClean:
+        description: "Run with 'clean'?"
+        type: boolean
+        default: true
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -10,4 +17,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
-      - run: ./gradlew clean test
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+      - name: Run tests
+        run: ./gradlew ${{ inputs.runClean == 'true' && 'clean test' || 'test' }}
