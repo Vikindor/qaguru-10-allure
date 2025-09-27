@@ -1,0 +1,1 @@
+rootProject.name = "qaguru-10-allure"
