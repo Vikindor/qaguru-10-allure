@@ -27,8 +27,10 @@ jobs:
       #
 
       - name: Run tests
-        run: ./gradlew clean test \
-          -Dselenide.remote=http://localhost:4444/wd/hub \
-          -Dselenide.browser=chrome \
-          -Dselenide.browserSize=1920x1080 \
-          -Dselenide.headless=true
+        run: |
+          ./gradlew \
+            -Dselenide.remote=http://localhost:4444/wd/hub \
+            -Dselenide.browser=chrome \
+            -Dselenide.browserSize=1920x1080 \
+            -Dselenide.headless=true \
+            clean test
