@@ -41,6 +41,11 @@ allure {
 
 tasks.test {
     useJUnitPlatform()
+    systemProperties(
+        System.getProperties()
+            .entries
+            .associate { (k, v) -> k.toString() to v }
+    )
     // Redirect SLF4J SimpleLogger output from stderr (default, shown in red in IntelliJ)
     // to stdout so that log messages appear in the normal "gray" console color.
     jvmArgs("-Dorg.slf4j.simpleLogger.logFile=System.out")

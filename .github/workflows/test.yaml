@@ -27,10 +27,11 @@ jobs:
       - name: Wait for Selenoid & print status
         run: |
           for i in {1..30}; do
-            if curl -fsS http://localhost:4444/status >/dev/null; then exit 0; fi
+            if curl -fsS http://localhost:4444/status > status.json; then
+              cat status.json; exit 0; fi
             sleep 1
           done
-          echo "Selenoid didn't start in time" && exit 1
+          echo "Selenoid didn't start in time"; exit 1
 
       - name: Run tests
         run: |
