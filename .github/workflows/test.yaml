@@ -18,19 +18,26 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      # Selenoid
       - name: Download CM tool
         run: curl -s https://aerokube.com/cm/bash | bash
 
       - name: Start Selenoid
         run: ./cm selenoid start --browsers 'chrome' --last-versions 1 --force
-      #
+
+      - name: Wait for Selenoid & print status
+        run: |
+          for i in {1..30}; do
+            if curl -fsS http://localhost:4444/status >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          echo "Selenoid didn't start in time" && exit 1
 
       - name: Run tests
         run: |
           ./gradlew \
             -Dselenide.remote=http://localhost:4444/wd/hub \
             -Dselenide.browser=chrome \
+            -Dselenide.browserVersion=latest \
             -Dselenide.browserSize=1920x1080 \
             -Dselenide.headless=true \
             clean test
