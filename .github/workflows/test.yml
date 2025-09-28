@@ -25,7 +25,7 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      # Make sure gradlew is executable on Linux after uploading from Windows
+      # Ensure gradlew is executable on Linux after uploading from Windows
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
@@ -35,6 +35,18 @@ jobs:
 
       - name: Run tests
         run: ./gradlew clean test -Dselenide.remote=http://localhost:4444/wd/hub
+
+      - name: Ensure gh-pages exists
+        if: always()
+        run: |
+          set -e
+          if ! git ls-remote --heads origin gh-pages | grep -q gh-pages; then
+            git switch --orphan gh-pages
+            git reset --hard
+            git commit --allow-empty -m "init gh-pages"
+            git push origin gh-pages
+            git switch -
+          fi
 
       - name: Checkout gh-pages history
         if: always()
@@ -60,4 +72,3 @@ jobs:
             github_token: ${{ secrets.GITHUB_TOKEN }}
             publish_branch: gh-pages
             publish_dir: allure-history
-            force_orphan: true
