@@ -18,6 +18,8 @@ jobs:
         run: chmod +x ./gradlew
 
       - uses: vikindor/selenoid-github-action@v1
+        with:
+          install-method: "direct"
 
       - name: Run tests
         run: ./gradlew clean test -Dselenide.remote=http://localhost:4444/wd/hub
