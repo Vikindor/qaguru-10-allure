@@ -1,0 +1,82 @@
+name: CI
+on: [push, workflow_dispatch]
+  
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Allow pushing to gh-pages
+
+    steps:
+      # 1) Check out the repository into $GITHUB_WORKSPACE so the job can read the files
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      # 2) Install JDK and put it on PATH (also sets JAVA_HOME)
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3) Configure Gradle for this job:
+      # - restore/save Gradle caches (dependencies, wrapper, etc.)
+      # - validate Gradle Wrapper (v4+)
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # 4) (Optional) Ensure gradlew is executable on Linux after uploading from Windows
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      # 5) Install CM and start Selenoid via composite action
+      - name: Set up Selenoid
+        uses: vikindor/selenoid-github-action@v1
+
+      # 6) Run tests against the local Selenoid hub
+      - name: Run tests
+        run: ./gradlew clean test -Dselenide.remote=http://localhost:4444/wd/hub
+
+      # 7) Ensure gh-pages exists on first deploy (idempotent)
+      - name: Ensure gh-pages exists
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! git ls-remote --heads origin gh-pages | grep -q gh-pages; then
+            git switch --orphan gh-pages
+            git reset --hard
+            git config user.name  "${GITHUB_ACTOR}"
+            git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+            git commit --allow-empty -m "init gh-pages"
+            git push origin gh-pages
+            git switch -
+          fi
+
+      # 8) Pull previous Allure history
+      - name: Checkout gh-pages history
+        if: always()
+        continue-on-error: true
+        uses: actions/checkout@v5
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      # 9) Build Allure report with history
+      - name: Build Allure report
+        if: always()
+        uses: simple-elf/allure-report-action@v1.13
+        with:
+          gh_pages: gh-pages
+          allure_results: build/allure-results
+          allure_report: allure-report
+          allure_history: allure-history
+
+      # 10) Publish to GitHub Pages
+      - name: Publish to gh-pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_branch: gh-pages
+            publish_dir: allure-history
