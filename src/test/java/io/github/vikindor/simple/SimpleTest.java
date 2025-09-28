@@ -22,7 +22,7 @@ public class SimpleTest {
         $("#query-builder-test").val("selenide/selenide").submit();
 
         // Instead of Selenium's $(linkText("selenide/selenide")).click();
-        $$("a").findBy(text("selenide/selenide")).click();
+        $("a[href='/selenide/selenide']").click();
 
         $("#issues-tab").click();
         $$("[data-testid=list-row-repo-name-and-number]").findBy(text("2757")).shouldBe(visible);
