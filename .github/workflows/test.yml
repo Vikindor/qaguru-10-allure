@@ -1,9 +1,8 @@
 name: Test
-on:
-  push:
-  workflow_dispatch:
+on: [push, workflow_dispatch]
+  
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -18,11 +17,7 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Download CM tool
-        run: curl -s https://aerokube.com/cm/bash | bash
-
-      - name: Start Selenoid
-        run: ./cm selenoid start --browsers 'chrome' --last-versions 1 --force
+      - uses: vikindor/selenoid-github-action@v1
 
       - name: Run tests
         run: ./gradlew clean test -Dselenide.remote=http://localhost:4444/wd/hub

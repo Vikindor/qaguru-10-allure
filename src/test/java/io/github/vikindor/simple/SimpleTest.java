@@ -24,7 +24,7 @@ public class SimpleTest {
         // Instead of Selenium's $(linkText("selenide/selenide")).click();
         $$("a").findBy(text("selenide/selenide")).click();
 
-        $("#issuessss-tab").click(); // Test should fail - typo in #issues-tab
+        $("#issues-tab").click();
         $$("[data-testid=list-row-repo-name-and-number]").findBy(text("2757")).shouldBe(visible);
     }
 }
