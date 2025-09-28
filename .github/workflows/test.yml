@@ -36,13 +36,16 @@ jobs:
       - name: Run tests
         run: ./gradlew clean test -Dselenide.remote=http://localhost:4444/wd/hub
 
-      - name: Ensure gh-pages exists
+      - name: Ensure gh-pages exists (first deploy)
         if: always()
+        shell: bash
         run: |
-          set -e
+          set -euo pipefail
           if ! git ls-remote --heads origin gh-pages | grep -q gh-pages; then
             git switch --orphan gh-pages
             git reset --hard
+            git config user.name  "${GITHUB_ACTOR}"
+            git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
             git commit --allow-empty -m "init gh-pages"
             git push origin gh-pages
             git switch -
