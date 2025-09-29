@@ -8,33 +8,26 @@ Minimal GitHub Actions setup to:
 
 ---
 
-## 1) Gradle (Allure config + forward `-D` flags to the test JVM)
+## 1) Gradle (Allure + forward `-D` flags to the test JVM)
 
-**Kotlin DSL (`build.gradle.kts`)**
+**`build.gradle.kts`**
 ```kotlin
 plugins {
     id("java")
     id("io.qameta.allure") version "3.0.0" // allure-framework/allure-gradle
 }
 
-dependencies {
-    // <--- Your dependencies --->
-    testImplementation("io.qameta.allure:allure-selenide:2.30.0")
-    // !!! Critical for allureServe task on allure-gradle version 3+ !!!
-    allureRawResultElements(files(layout.buildDirectory.dir("allure-results")))
-}
-
 allure {
     report {
         version.set("2.35.1") // allure-framework/allure2
     }
-    adapter { // Responsible for creating the build/allure-results folder
+    adapter { // responsible for creating the build/allure-results folder
         autoconfigure.set(true)
         autoconfigureListeners.set(true)
-        aspectjWeaver.set(true) // Processes the @Step annotation
+        aspectjWeaver.set(true) // processes the @Step annotation
         frameworks {
-            junit5 { // Framework name
-                adapterVersion.set("2.30.0") // Same as allure-framework/allure-java
+            junit5 { // framework name
+                adapterVersion.set("2.30.0") // same as allure-framework/allure-java
             }
         }
     }
@@ -42,50 +35,12 @@ allure {
 
 tasks.test {
     useJUnitPlatform()
-    // Without this, -Dselenide.* from the .yml workflow won’t reach your JUnit tests
+    // without this, -Dselenide.* from the workflow won’t reach your JUnit tests
     systemProperties(
         System.getProperties()
             .entries
             .associate { (k, v) -> k.toString() to v }
     )
-}
-```
-
-**Groovy DSL (`build.gradle`)**
-```groovy
-plugins {
-    id 'java'
-    id 'io.qameta.allure' version '3.0.0' // allure-framework/allure-gradle
-}
-
-dependencies {
-    // <--- Your dependencies --->
-    testImplementation 'io.qameta.allure:allure-selenide:2.30.0'
-
-    // !!! Critical for allureServe task on allure-gradle version 3+ !!!
-    allureRawResultElements files(layout.buildDirectory.dir("allure-results"))
-}
-
-allure {
-    report {
-        version = '2.35.1' // allure-framework/allure2
-    }
-    adapter { // Responsible for creating the build/allure-results folder
-        autoconfigure = true
-        autoconfigureListeners = true
-        aspectjWeaver = true // Processes the @Step annotation
-        frameworks {
-            junit5 { // Framework name
-                adapterVersion = '2.30.0' // Same as allure-framework/allure-java
-            }
-        }
-    }
-}
-
-test {
-    useJUnitPlatform()
-    // Without this, -Dselenide.* from the .yml workflow won’t reach your JUnit tests
-    systemProperties(System.getProperties())
 }
 ```
 
@@ -96,8 +51,8 @@ test {
 **`.github/workflows/ci.yml`**
 ```yaml
 name: CI
-on: [push, workflow_dispatch] # Set your triggers
-
+on: [push, workflow_dispatch]
+  
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -113,8 +68,8 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
-          distribution: 'temurin' # Set your Java provider
-          java-version: '17' # Set your version
+          distribution: 'temurin'
+          java-version: '17'
 
       # 3) Configure Gradle for this job:
       # - restore/save Gradle caches (dependencies, wrapper, etc.)
@@ -179,36 +134,6 @@ jobs:
             publish_dir: allure-history
 
 ```
-
-## Workflow triggers
-
-`on: [push, workflow_dispatch]`
-
-- push: runs on every push to the repository
-- workflow_dispatch: allows manual run from the GitHub Actions UI
-
-You can keep only one trigger or use them together.
-
-Other common options:
-- pull_request: run on pull request events
-- schedule: run on a schedule (cron syntax)
-- release: run when a release is published
-- issues / issue_comment / etc.: run on repository events
-
-## Supported Java distributions
-
-`distribution: 'temurin'`
-
-Available options:
-- temurin — Eclipse Temurin (Adoptium, recommended)
-- adopt — AdoptOpenJDK (deprecated, use temurin)
-- zulu — Azul Zulu OpenJDK
-- oracle — Oracle JDK
-- microsoft — Microsoft Build of OpenJDK
-- corretto — Amazon Corretto
-- sapmachine — SAP SapMachine JDK
-- semeru — IBM Semeru Runtime
-- dragonwell — Alibaba Dragonwell JDK
 
 ---
 

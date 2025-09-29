@@ -1,6 +1,6 @@
 name: CI
-on: [push, workflow_dispatch]
-  
+on: [push, workflow_dispatch] # Set your triggers
+
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -16,8 +16,8 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: 'temurin' # Set your Java provider
+          java-version: '17' # Set your version
 
       # 3) Configure Gradle for this job:
       # - restore/save Gradle caches (dependencies, wrapper, etc.)
@@ -77,6 +77,6 @@ jobs:
         if: always()
         uses: peaceiris/actions-gh-pages@v4
         with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_branch: gh-pages
-            publish_dir: allure-history
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
