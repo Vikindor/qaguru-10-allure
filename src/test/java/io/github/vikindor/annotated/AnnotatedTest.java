@@ -12,10 +12,11 @@ public class AnnotatedTest {
     private final String tabName = "issues";
     private final String issueNumber = "2757";
 
+    WebSteps step = new WebSteps();
+
     @Test
     public void shouldFindIssueNumberTest() {
         SelenideLogger.addListener("allure", new AllureSelenide());
-        WebSteps step = new WebSteps();
 
         step.openGitHub();
         step.searchForRepository(repository);
