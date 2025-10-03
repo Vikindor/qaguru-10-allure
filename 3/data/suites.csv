@@ -1,0 +1,6 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","8938","shouldFindIssueNumberTest()","","Fri Oct 03 10:25:27 UTC 2025","passed","Fri Oct 03 10:25:36 UTC 2025","","io.github.vikindor.simple.SimpleTest","io.github.vikindor.simple.SimpleTest","shouldFindIssueNumberTest"
+"","9452","shouldFindIssueNumberTest()","","Fri Oct 03 10:25:17 UTC 2025","passed","Fri Oct 03 10:25:27 UTC 2025","","io.github.vikindor.lambda.LambdaTest","io.github.vikindor.lambda.LambdaTest","shouldFindIssueNumberTest"
+"","1","Some test name","","Fri Oct 03 10:25:27 UTC 2025","passed","Fri Oct 03 10:25:27 UTC 2025","","io.github.vikindor.other.LabelsTest","io.github.vikindor.other.LabelsTest","testDynamicLabels"
+"","1","Some test name","","Fri Oct 03 10:25:27 UTC 2025","passed","Fri Oct 03 10:25:27 UTC 2025","","io.github.vikindor.other.LabelsTest","io.github.vikindor.other.LabelsTest","testStaticLabels"
+"","13083","shouldFindIssueNumberTest()","","Fri Oct 03 10:25:04 UTC 2025","passed","Fri Oct 03 10:25:17 UTC 2025","","io.github.vikindor.annotated.AnnotatedTest","io.github.vikindor.annotated.AnnotatedTest","shouldFindIssueNumberTest"
